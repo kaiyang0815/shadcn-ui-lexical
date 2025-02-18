@@ -1,0 +1,8 @@
+{
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.formatOnSave": true,
+  // 自动排序导入
+  "editor.codeActionsOnSave": {
+    "source.organizeImports": "always"
+  }
+}
