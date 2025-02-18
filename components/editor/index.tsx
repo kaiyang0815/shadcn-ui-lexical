@@ -12,6 +12,7 @@ import { RichTextPlugin } from '@lexical/react/LexicalRichTextPlugin';
 import { HeadingNode, QuoteNode } from '@lexical/rich-text';
 import { TableCellNode, TableNode, TableRowNode } from '@lexical/table';
 import { ToolbarPlugin } from './plugins/toolbar-plugin';
+import TreeViewPlugin from './plugins/tree-view-plugin';
 
 const theme = {
   // Theme styling goes here
@@ -64,6 +65,7 @@ function Editor() {
           <AutoFocusPlugin />
         </div>
       </div>
+      <TreeViewPlugin />
     </LexicalComposer>
   );
 }
