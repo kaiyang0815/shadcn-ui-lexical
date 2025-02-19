@@ -1,36 +1,46 @@
 'use client';
 
+import InitialEditorState from '@/lib/initial-editor-state.json';
 import { CodeHighlightNode, CodeNode } from '@lexical/code';
 import { AutoLinkNode, LinkNode } from '@lexical/link';
 import { ListItemNode, ListNode } from '@lexical/list';
-import { AutoFocusPlugin } from '@lexical/react/LexicalAutoFocusPlugin';
-import { LexicalComposer } from '@lexical/react/LexicalComposer';
+import { TRANSFORMERS } from '@lexical/markdown';
+import {
+  InitialConfigType,
+  LexicalComposer,
+} from '@lexical/react/LexicalComposer';
 import { ContentEditable } from '@lexical/react/LexicalContentEditable';
 import { LexicalErrorBoundary } from '@lexical/react/LexicalErrorBoundary';
 import { HistoryPlugin } from '@lexical/react/LexicalHistoryPlugin';
+import { LinkPlugin } from '@lexical/react/LexicalLinkPlugin';
+import { ListPlugin } from '@lexical/react/LexicalListPlugin';
+import { MarkdownShortcutPlugin } from '@lexical/react/LexicalMarkdownShortcutPlugin';
 import { RichTextPlugin } from '@lexical/react/LexicalRichTextPlugin';
 import { HeadingNode, QuoteNode } from '@lexical/rich-text';
-import { TableCellNode, TableNode, TableRowNode } from '@lexical/table';
-import { ToolbarPlugin } from './plugins/toolbar-plugin';
-import TreeViewPlugin from './plugins/tree-view-plugin';
 
-const theme = {
-  // Theme styling goes here
-  //...
-};
+import { ToolbarPlugin } from '@/components/editor/plugins/toolbar-plugin';
+import TreeViewPlugin from '@/components/editor/plugins/tree-view-plugin';
+import { AutoFocusPlugin } from '@lexical/react/LexicalAutoFocusPlugin';
 
-// Catch any errors that occur during Lexical updates and log them
-// or throw them as needed. If you don't throw them, Lexical will
-// try to recover gracefully without losing user data.
-function onError(error: Error) {
-  console.error(error);
-}
-
-function Editor() {
-  const initialConfig = {
-    namespace: 'MyEditor',
-    theme,
-    onError,
+export default function Editor() {
+  const config: InitialConfigType = {
+    namespace: 'lexical-editor',
+    theme: {
+      text: {
+        bold: 'textBold',
+        capitalize: 'textCapitalize',
+        code: 'textCode',
+        highlight: 'textHighlight',
+        italic: 'textItalic',
+        lowercase: 'textLowercase',
+        strikethrough: 'textStrikethrough',
+        subscript: 'textSubscript',
+        superscript: 'textSuperscript',
+        underline: 'textUnderline',
+        underlineStrikethrough: 'textUnderlineStrikethrough',
+        uppercase: 'textUppercase',
+      },
+    },
     nodes: [
       HeadingNode,
       ListNode,
@@ -38,36 +48,39 @@ function Editor() {
       QuoteNode,
       CodeNode,
       CodeHighlightNode,
-      TableNode,
-      TableCellNode,
-      TableRowNode,
       AutoLinkNode,
       LinkNode,
     ],
+    editorState: JSON.stringify(InitialEditorState),
+    onError: (error) => {
+      console.error(error);
+    },
   };
 
   return (
-    <LexicalComposer initialConfig={initialConfig}>
-      <div className="mx-4 my-auto">
+    <LexicalComposer initialConfig={config}>
+      <div className="mx-auto relative flex flex-col mt-10 border shadow rounded-lg my-2">
         <ToolbarPlugin />
-        {/* inner */}
-        <div>
+        <div className="relative">
           <RichTextPlugin
             contentEditable={
-              <ContentEditable
-                aria-placeholder={'Enter some text...'}
-                placeholder={<div>Enter some text...</div>}
-              />
+              <ContentEditable className="focus:outline-none w-full px-4 py-2 overflow-auto relative" />
+            }
+            placeholder={
+              <p className="text-muted-foreground absolute top-0 px-8 py-4 w-full pointer-events-none">
+                Enter some text...
+              </p>
             }
             ErrorBoundary={LexicalErrorBoundary}
           />
           <HistoryPlugin />
-          <AutoFocusPlugin />
         </div>
+        <AutoFocusPlugin />
+        <ListPlugin />
+        <LinkPlugin />
+        <MarkdownShortcutPlugin transformers={TRANSFORMERS} />
       </div>
       <TreeViewPlugin />
     </LexicalComposer>
   );
 }
-
-export { Editor };

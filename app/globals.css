@@ -1,4 +1,4 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 
 @plugin "tailwindcss-animate";
 
@@ -101,5 +101,20 @@
   }
   body {
     @apply bg-background text-foreground;
+  }
+}
+
+@layer utilities {
+  .textBold {
+    @apply font-bold;
+  }
+  .textCapitalize {
+    @apply capitalize;
+  }
+  .textCode {
+    @apply bg-stone-400 px-0.5 p-y[1px] text-base;
+  }
+  .textItalic {
+    @apply italic;
   }
 }

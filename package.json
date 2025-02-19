@@ -17,6 +17,8 @@
     "@lexical/react": "^0.24.0",
     "@lexical/rich-text": "^0.24.0",
     "@lexical/table": "^0.24.0",
+    "@lexical/utils": "^0.24.0",
+    "@radix-ui/react-separator": "^1.1.2",
     "@radix-ui/react-slot": "^1.1.2",
     "@radix-ui/react-toggle": "^1.1.2",
     "class-variance-authority": "^0.7.1",
