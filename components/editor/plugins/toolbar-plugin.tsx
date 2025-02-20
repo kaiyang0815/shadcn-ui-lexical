@@ -6,6 +6,7 @@ import {
   CAN_UNDO_COMMAND,
   COMMAND_PRIORITY_CRITICAL,
   FORMAT_TEXT_COMMAND,
+  LexicalEditor,
   REDO_COMMAND,
   SELECTION_CHANGE_COMMAND,
   UNDO_COMMAND,
@@ -15,16 +16,56 @@ import { useCallback, useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { Toggle } from '@/components/ui/toggle';
-import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
-import { $findMatchingParent, mergeRegister } from '@lexical/utils';
 
-import { Bold, Italic, Redo2, Underline, Undo2 } from 'lucide-react';
+import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
+import {
+  $findMatchingParent,
+  $getNearestNodeOfType,
+  mergeRegister,
+} from '@lexical/utils';
+
+import { $isListNode, ListNode } from '@lexical/list';
+import {
+  $createHeadingNode,
+  $isHeadingNode,
+  HeadingTagType,
+} from '@lexical/rich-text';
+import {
+  Bold,
+  Code2,
+  Highlighter,
+  Italic,
+  Redo2,
+  Underline,
+  Undo2,
+} from 'lucide-react';
+import BlockTypeDropdown from '../components/block-type-dropdown';
+import { blockTypeToBlockName } from '../components/block-types';
+
+export const formatHeading = (
+  editor: LexicalEditor,
+  blockType: string,
+  headingSize: HeadingTagType
+) => {
+  if (blockType !== headingSize) {
+    editor.update(() => {
+      const selection = $getSelection();
+      $setBlocksType(selection, () => $createHeadingNode(headingSize));
+    });
+  }
+};
 
 function ToolbarPlugin() {
   const [editor] = useLexicalComposerContext();
+
+  const [blockType, setBlockType] =
+    useState<keyof typeof blockTypeToBlockName>('paragraph');
+
   const [isBold, setIsBold] = useState<boolean>(false);
   const [isItalic, setIsItalic] = useState<boolean>(false);
   const [isUnderline, setIsUnderline] = useState<boolean>(false);
+  const [isCode, setIsCode] = useState<boolean>(false);
+  const [isHighlight, setIsHighlight] = useState(false);
 
   const [canUndo, setCanUndo] = useState<boolean>(false);
   const [canRedo, setCanRedo] = useState<boolean>(false);
@@ -48,6 +89,28 @@ function ToolbarPlugin() {
 
       if (element === null) {
         element = anchorNode.getTopLevelElementOrThrow();
+      }
+
+      const elementDOM = editor.getElementByKey(element.getKey());
+
+      if (elementDOM !== null) {
+        if ($isListNode(element)) {
+          const parentList = $getNearestNodeOfType<ListNode>(
+            anchorNode,
+            ListNode
+          );
+          const type = parentList
+            ? parentList.getListType()
+            : element.getListType();
+          setBlockType(type);
+        } else {
+          const type = $isHeadingNode(element)
+            ? element.getTag()
+            : element.getType();
+          if (type in blockTypeToBlockName) {
+            setBlockType(type as keyof typeof blockTypeToBlockName);
+          }
+        }
       }
     }
   }, [editor]);
@@ -112,6 +175,8 @@ function ToolbarPlugin() {
 
         <Separator orientation="vertical" className="h-auto" />
 
+        <BlockTypeDropdown blockType={blockType} />
+
         <Toggle
           area-label="Bold"
           pressed={isBold}
@@ -144,6 +209,28 @@ function ToolbarPlugin() {
           }}
         >
           <Underline />
+        </Toggle>
+
+        <Toggle
+          aria-label="Code"
+          pressed={isCode}
+          onPressedChange={(pressed) => {
+            editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'code');
+            setIsCode(pressed);
+          }}
+        >
+          <Code2 />
+        </Toggle>
+
+        <Toggle
+          aria-label="Highlight"
+          pressed={isHighlight}
+          onPressedChange={(pressed) => {
+            editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'highlight');
+            setIsHighlight(pressed);
+          }}
+        >
+          <Highlighter />
         </Toggle>
       </div>
     </div>

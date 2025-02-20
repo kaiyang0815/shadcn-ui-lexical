@@ -4,5 +4,10 @@
   // 自动排序导入
   "editor.codeActionsOnSave": {
     "source.organizeImports": "always"
-  }
+  },
+  "editor.quickSuggestions": {
+    "other": "on",
+    "comments": "off"
+  },
+  "css.validate": false
 }

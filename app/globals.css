@@ -105,6 +105,27 @@
 }
 
 @layer utilities {
+  h1 {
+    @apply text-5xl font-black;
+  }
+  h2 {
+    @apply text-4xl font-extrabold;
+  }
+  h3 {
+    @apply text-3xl font-bold;
+  }
+  h4 {
+    @apply text-2xl font-semibold;
+  }
+  h5 {
+    @apply text-xl font-medium;
+  }
+  h6 {
+    @apply text-lg font-normal;
+  }
+  .paragraph {
+    @apply m-0;
+  }
   .textBold {
     @apply font-bold;
   }
@@ -112,9 +133,33 @@
     @apply capitalize;
   }
   .textCode {
-    @apply bg-stone-400 px-0.5 p-y[1px] text-base;
+    @apply bg-stone-200 px-1 mx-0.5 text-sm rounded-sm;
+  }
+  .textHighlight {
+    @apply bg-amber-100 border-b-2 border-amber-200;
   }
   .textItalic {
     @apply italic;
+  }
+  .textLowercase {
+    @apply lowercase;
+  }
+  .textStrikethrough {
+    @apply line-through;
+  }
+  .textSubscript {
+    @apply align-sub! text-sm;
+  }
+  .textSuperscript {
+    @apply align-super! text-sm;
+  }
+  .textUnderline {
+    @apply underline;
+  }
+  .textUnderlineStrikethrough {
+    @apply line-through;
+  }
+  .textUppercase {
+    @apply uppercase;
   }
 }
